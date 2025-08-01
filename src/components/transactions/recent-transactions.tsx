@@ -8,7 +8,7 @@ import {
   ArrowUpRight,
   DollarSign,
 } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useTransition } from 'react'
 
 interface RecentTransaction {
   id: string
@@ -42,12 +42,16 @@ interface RecentTransactionsProps {
 export function RecentTransactions({ refreshKey }: RecentTransactionsProps) {
   const [transactions, setTransactions] = useState<RecentTransaction[]>([])
   const [loading, setLoading] = useState(true)
+  const [isPending, startTransition] = useTransition()
 
   useEffect(() => {
-    fetchTransactions()
+    startTransition(() => {
+      fetchTransactions()
+    })
   }, [refreshKey])
 
   const fetchTransactions = async () => {
+    setLoading(true)
     try {
       const result = await getRecentTransactions(10)
       if (result.success && result.data) {

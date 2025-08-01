@@ -12,7 +12,7 @@ import {
   Smartphone,
   Wallet,
 } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useTransition } from 'react'
 
 interface Account {
   id: string
@@ -53,8 +53,10 @@ interface AccountsListProps {
 export function AccountsList({ refreshKey }: AccountsListProps) {
   const [accounts, setAccounts] = useState<Account[]>([])
   const [loading, setLoading] = useState(true)
+  const [, startTransition] = useTransition()
 
   const fetchAccounts = async () => {
+    setLoading(true)
     try {
       const result = await getAccounts()
       if (result.success && result.data) {
@@ -70,7 +72,9 @@ export function AccountsList({ refreshKey }: AccountsListProps) {
   }
 
   useEffect(() => {
-    fetchAccounts()
+    startTransition(() => {
+      fetchAccounts()
+    })
   }, [refreshKey])
 
   if (loading) {
