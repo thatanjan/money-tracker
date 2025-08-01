@@ -2,6 +2,7 @@
 
 import { AccountsList } from '@/components/accounts/accounts-list'
 import { AddAccountDialog } from '@/components/accounts/add-account-dialog'
+import { AddIncomeDialog } from '@/components/transactions/add-income-dialog'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
@@ -31,6 +32,11 @@ export function Dashboard({ user }: DashboardProps) {
   const [refreshKey, setRefreshKey] = useState(0)
 
   const handleAccountCreated = () => {
+    // Refresh the dashboard data
+    setRefreshKey(prev => prev + 1)
+  }
+
+  const handleIncomeAdded = () => {
     // Refresh the dashboard data
     setRefreshKey(prev => prev + 1)
   }
@@ -70,10 +76,12 @@ export function Dashboard({ user }: DashboardProps) {
       <main className='max-w-6xl mx-auto p-4 space-y-6'>
         {/* Quick Actions */}
         <div className='grid grid-cols-2 sm:grid-cols-4 gap-3'>
-          <Button className='h-20 flex-col gap-2' variant='outline'>
-            <PlusCircle className='h-6 w-6' />
-            <span className='text-sm'>Add Income</span>
-          </Button>
+          <AddIncomeDialog onIncomeAdded={handleIncomeAdded}>
+            <Button className='h-20 flex-col gap-2' variant='outline'>
+              <PlusCircle className='h-6 w-6' />
+              <span className='text-sm'>Add Income</span>
+            </Button>
+          </AddIncomeDialog>
           <Button className='h-20 flex-col gap-2' variant='outline'>
             <TrendingDown className='h-6 w-6' />
             <span className='text-sm'>Add Expense</span>
