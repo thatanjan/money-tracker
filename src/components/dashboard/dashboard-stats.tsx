@@ -3,7 +3,7 @@
 import { getDashboardData } from '@/actions'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { TrendingDown, TrendingUp } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useTransition } from 'react'
 
 interface DashboardStats {
   totalBalance: number
@@ -31,12 +31,16 @@ export function DashboardStats({ refreshKey }: DashboardStatsProps) {
     accounts: [],
   })
   const [loading, setLoading] = useState(true)
+  const [isPending, startTransition] = useTransition()
 
   useEffect(() => {
-    fetchStats()
+    startTransition(() => {
+      fetchStats()
+    })
   }, [refreshKey])
 
   const fetchStats = async () => {
+    setLoading(true)
     try {
       const result = await getDashboardData()
       if (result.success && result.data) {
