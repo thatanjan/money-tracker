@@ -37,7 +37,7 @@ export async function createTransaction(formData: FormData) {
       categoryId: formData.get('categoryId') as string,
       date: formData.get('date') as string,
       type: formData.get('type') as 'income' | 'expense' | 'transfer',
-      notes: formData.get('notes') as string || undefined,
+      notes: (formData.get('notes') as string) || undefined,
     }
 
     const validatedData = createTransactionSchema.parse(rawData)
@@ -98,22 +98,22 @@ export async function createTransaction(formData: FormData) {
 
     // Revalidate pages that might show transactions and accounts
     revalidatePath('/')
-    
+
     return { success: true, data: result }
   } catch (error) {
     console.error('Error creating transaction:', error)
 
     if (error instanceof z.ZodError) {
-      return { 
-        success: false, 
-        error: 'Invalid input', 
-        details: error.issues 
+      return {
+        success: false,
+        error: 'Invalid input',
+        details: error.issues,
       }
     }
 
-    return { 
-      success: false, 
-      error: error instanceof Error ? error.message : 'Internal server error' 
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Internal server error',
     }
   }
 }
@@ -197,22 +197,22 @@ export async function createTransactionData(data: {
 
     // Revalidate pages that might show transactions and accounts
     revalidatePath('/')
-    
+
     return { success: true, data: result }
   } catch (error) {
     console.error('Error creating transaction:', error)
 
     if (error instanceof z.ZodError) {
-      return { 
-        success: false, 
-        error: 'Invalid input', 
-        details: error.issues 
+      return {
+        success: false,
+        error: 'Invalid input',
+        details: error.issues,
       }
     }
 
-    return { 
-      success: false, 
-      error: error instanceof Error ? error.message : 'Internal server error' 
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Internal server error',
     }
   }
 }
@@ -259,9 +259,9 @@ export async function getTransactions(
     return { success: true, data: userTransactions }
   } catch (error) {
     console.error('Error fetching transactions:', error)
-    return { 
-      success: false, 
-      error: error instanceof Error ? error.message : 'Internal server error' 
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Internal server error',
     }
   }
 }

@@ -52,22 +52,22 @@ export async function createAccount(formData: FormData) {
 
     // Revalidate the accounts page
     revalidatePath('/')
-    
+
     return { success: true, data: newAccount }
   } catch (error) {
     console.error('Error creating account:', error)
 
     if (error instanceof z.ZodError) {
-      return { 
-        success: false, 
-        error: 'Invalid input', 
-        details: error.issues 
+      return {
+        success: false,
+        error: 'Invalid input',
+        details: error.issues,
       }
     }
 
-    return { 
-      success: false, 
-      error: error instanceof Error ? error.message : 'Internal server error' 
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Internal server error',
     }
   }
 }
@@ -107,22 +107,22 @@ export async function createAccountData(data: {
 
     // Revalidate the accounts page
     revalidatePath('/')
-    
+
     return { success: true, data: newAccount }
   } catch (error) {
     console.error('Error creating account:', error)
 
     if (error instanceof z.ZodError) {
-      return { 
-        success: false, 
-        error: 'Invalid input', 
-        details: error.issues 
+      return {
+        success: false,
+        error: 'Invalid input',
+        details: error.issues,
       }
     }
 
-    return { 
-      success: false, 
-      error: error instanceof Error ? error.message : 'Internal server error' 
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Internal server error',
     }
   }
 }
@@ -148,9 +148,9 @@ export async function getAccounts() {
     return { success: true, data: userAccounts }
   } catch (error) {
     console.error('Error fetching accounts:', error)
-    return { 
-      success: false, 
-      error: error instanceof Error ? error.message : 'Internal server error' 
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Internal server error',
     }
   }
 }

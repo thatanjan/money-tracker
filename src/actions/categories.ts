@@ -49,22 +49,22 @@ export async function createCategory(formData: FormData) {
 
     // Revalidate pages that might show categories
     revalidatePath('/')
-    
+
     return { success: true, data: newCategory }
   } catch (error) {
     console.error('Error creating category:', error)
 
     if (error instanceof z.ZodError) {
-      return { 
-        success: false, 
-        error: 'Invalid input', 
-        details: error.issues 
+      return {
+        success: false,
+        error: 'Invalid input',
+        details: error.issues,
       }
     }
 
-    return { 
-      success: false, 
-      error: error instanceof Error ? error.message : 'Internal server error' 
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Internal server error',
     }
   }
 }
@@ -102,22 +102,22 @@ export async function createCategoryData(data: {
 
     // Revalidate pages that might show categories
     revalidatePath('/')
-    
+
     return { success: true, data: newCategory }
   } catch (error) {
     console.error('Error creating category:', error)
 
     if (error instanceof z.ZodError) {
-      return { 
-        success: false, 
-        error: 'Invalid input', 
-        details: error.issues 
+      return {
+        success: false,
+        error: 'Invalid input',
+        details: error.issues,
       }
     }
 
-    return { 
-      success: false, 
-      error: error instanceof Error ? error.message : 'Internal server error' 
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Internal server error',
     }
   }
 }
@@ -155,16 +155,16 @@ export async function getCategories(type?: 'income' | 'expense' | 'transfer') {
         success: true,
         data: type
           ? defaultCategories.filter(cat => cat.type === type)
-          : defaultCategories
+          : defaultCategories,
       }
     }
 
     return { success: true, data: userCategories }
   } catch (error) {
     console.error('Error fetching categories:', error)
-    return { 
-      success: false, 
-      error: error instanceof Error ? error.message : 'Internal server error' 
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Internal server error',
     }
   }
 }

@@ -1,8 +1,8 @@
 'use client'
 
+import { getAccounts } from '@/actions'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { getAccounts } from '@/actions'
 import {
   Banknote,
   CreditCard,
@@ -97,7 +97,8 @@ export function AccountsList({ refreshKey }: AccountsListProps) {
     <div className='space-y-3'>
       {accounts.map(account => {
         const IconComponent =
-          ICON_MAP[(account.icon || 'wallet') as keyof typeof ICON_MAP] || Wallet
+          ICON_MAP[(account.icon || 'wallet') as keyof typeof ICON_MAP] ||
+          Wallet
         const currencySymbol =
           CURRENCY_SYMBOLS[account.currency as keyof typeof CURRENCY_SYMBOLS] ||
           account.currency

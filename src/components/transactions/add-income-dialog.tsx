@@ -1,5 +1,6 @@
 'use client'
 
+import { createTransactionData, getAccounts, getCategories } from '@/actions'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -27,7 +28,6 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-import { getAccounts, getCategories, createTransactionData } from '@/actions'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CalendarDays, DollarSign, PlusCircle, TrendingUp } from 'lucide-react'
 import { useEffect, useState } from 'react'
@@ -277,7 +277,9 @@ export function AddIncomeDialog({
                             <div className='flex items-center space-x-2'>
                               <div
                                 className='w-3 h-3 rounded-full'
-                                style={{ backgroundColor: account.color || '#6B7280' }}
+                                style={{
+                                  backgroundColor: account.color || '#6B7280',
+                                }}
                               ></div>
                               <span>{account.name}</span>
                               <span className='text-xs text-gray-500'>
@@ -320,7 +322,9 @@ export function AddIncomeDialog({
                             <div className='flex items-center space-x-2'>
                               <div
                                 className='w-3 h-3 rounded-full'
-                                style={{ backgroundColor: category.color || '#6B7280' }}
+                                style={{
+                                  backgroundColor: category.color || '#6B7280',
+                                }}
                               ></div>
                               <span>{category.name}</span>
                             </div>
