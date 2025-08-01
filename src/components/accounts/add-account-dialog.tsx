@@ -26,6 +26,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { createAccountData } from '@/actions'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
   Banknote,
@@ -128,19 +129,13 @@ export function AddAccountDialog({
   async function onSubmit(data: AccountFormValues) {
     setIsLoading(true)
     try {
-      const response = await fetch('/api/accounts', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ...data,
-          balance: parseFloat(data.balance),
-        }),
+      const result = await createAccountData({
+        ...data,
+        balance: parseFloat(data.balance),
       })
 
-      if (!response.ok) {
-        throw new Error('Failed to create account')
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to create account')
       }
 
       form.reset()

@@ -27,6 +27,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
+import { getAccounts, getCategories, createTransactionData } from '@/actions'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CalendarDays, DollarSign, PlusCircle, TrendingUp } from 'lucide-react'
 import { useEffect, useState } from 'react'
@@ -70,15 +71,15 @@ interface Account {
   name: string
   currency: string
   balance: string
-  icon: string
-  color: string
+  icon: string | null
+  color: string | null
 }
 
 interface Category {
   id: string
   name: string
-  icon: string
-  color: string
+  icon: string | null
+  color: string | null
   type: string
 }
 
@@ -119,19 +120,21 @@ export function AddIncomeDialog({
   const loadRequiredData = async () => {
     setLoadingData(true)
     try {
-      const [accountsResponse, categoriesResponse] = await Promise.all([
-        fetch('/api/accounts'),
-        fetch('/api/categories?type=income'),
+      const [accountsResult, categoriesResult] = await Promise.all([
+        getAccounts(),
+        getCategories('income'),
       ])
 
-      if (accountsResponse.ok) {
-        const accountsData = await accountsResponse.json()
-        setAccounts(accountsData)
+      if (accountsResult.success && accountsResult.data) {
+        setAccounts(accountsResult.data)
+      } else {
+        console.error('Error loading accounts:', accountsResult.error)
       }
 
-      if (categoriesResponse.ok) {
-        const categoriesData = await categoriesResponse.json()
-        setCategories(categoriesData)
+      if (categoriesResult.success && categoriesResult.data) {
+        setCategories(categoriesResult.data)
+      } else {
+        console.error('Error loading categories:', categoriesResult.error)
       }
     } catch (error) {
       console.error('Error loading data:', error)
@@ -143,20 +146,14 @@ export function AddIncomeDialog({
   async function onSubmit(data: IncomeFormValues) {
     setIsLoading(true)
     try {
-      const response = await fetch('/api/transactions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ...data,
-          amount: parseFloat(data.amount),
-          type: 'income',
-        }),
+      const result = await createTransactionData({
+        ...data,
+        amount: parseFloat(data.amount),
+        type: 'income',
       })
 
-      if (!response.ok) {
-        throw new Error('Failed to add income')
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to add income')
       }
 
       form.reset()
@@ -280,7 +277,7 @@ export function AddIncomeDialog({
                             <div className='flex items-center space-x-2'>
                               <div
                                 className='w-3 h-3 rounded-full'
-                                style={{ backgroundColor: account.color }}
+                                style={{ backgroundColor: account.color || '#6B7280' }}
                               ></div>
                               <span>{account.name}</span>
                               <span className='text-xs text-gray-500'>
@@ -323,7 +320,7 @@ export function AddIncomeDialog({
                             <div className='flex items-center space-x-2'>
                               <div
                                 className='w-3 h-3 rounded-full'
-                                style={{ backgroundColor: category.color }}
+                                style={{ backgroundColor: category.color || '#6B7280' }}
                               ></div>
                               <span>{category.name}</span>
                             </div>
