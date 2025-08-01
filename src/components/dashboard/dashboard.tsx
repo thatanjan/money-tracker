@@ -1,118 +1,118 @@
-"use client";
+'use client'
 
-import { User } from "next-auth";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { signOut } from "next-auth/react";
-import { 
-  PlusCircle, 
-  CreditCard, 
-  TrendingDown, 
-  DollarSign,
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import {
   ArrowUpDown,
-  LogOut
-} from "lucide-react";
+  CreditCard,
+  DollarSign,
+  LogOut,
+  PlusCircle,
+  TrendingDown,
+} from 'lucide-react'
+import { User } from 'next-auth'
+import { signOut } from 'next-auth/react'
 
 interface DashboardProps {
-  user: User;
+  user: User
 }
 
 export function Dashboard({ user }: DashboardProps) {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className='min-h-screen bg-gray-50'>
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 p-4">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold text-gray-900">Money Tracker</h1>
+      <header className='bg-white border-b border-gray-200 p-4'>
+        <div className='max-w-6xl mx-auto flex items-center justify-between'>
+          <div className='flex items-center gap-3'>
+            <h1 className='text-2xl font-bold text-gray-900'>Money Tracker</h1>
           </div>
-          
-          <div className="flex items-center gap-3">
+
+          <div className='flex items-center gap-3'>
             <Avatar>
-              <AvatarImage src={user.image || ""} alt={user.name || ""} />
+              <AvatarImage src={user.image || ''} alt={user.name || ''} />
               <AvatarFallback>
-                {user.name?.charAt(0) || user.email?.charAt(0) || "U"}
+                {user.name?.charAt(0) || user.email?.charAt(0) || 'U'}
               </AvatarFallback>
             </Avatar>
-            <div className="hidden sm:block">
-              <p className="text-sm font-medium text-gray-900">{user.name}</p>
-              <p className="text-xs text-gray-500">{user.email}</p>
+            <div className='hidden sm:block'>
+              <p className='text-sm font-medium text-gray-900'>{user.name}</p>
+              <p className='text-xs text-gray-500'>{user.email}</p>
             </div>
-            <Button 
-              variant="ghost" 
-              size="sm" 
+            <Button
+              variant='ghost'
+              size='sm'
               onClick={() => signOut()}
-              className="text-gray-500 hover:text-gray-700"
+              className='text-gray-500 hover:text-gray-700'
             >
-              <LogOut className="h-4 w-4" />
+              <LogOut className='h-4 w-4' />
             </Button>
           </div>
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto p-4 space-y-6">
+      <main className='max-w-6xl mx-auto p-4 space-y-6'>
         {/* Quick Actions */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <Button className="h-20 flex-col gap-2" variant="outline">
-            <PlusCircle className="h-6 w-6" />
-            <span className="text-sm">Add Income</span>
+        <div className='grid grid-cols-2 sm:grid-cols-4 gap-3'>
+          <Button className='h-20 flex-col gap-2' variant='outline'>
+            <PlusCircle className='h-6 w-6' />
+            <span className='text-sm'>Add Income</span>
           </Button>
-          <Button className="h-20 flex-col gap-2" variant="outline">
-            <TrendingDown className="h-6 w-6" />
-            <span className="text-sm">Add Expense</span>
+          <Button className='h-20 flex-col gap-2' variant='outline'>
+            <TrendingDown className='h-6 w-6' />
+            <span className='text-sm'>Add Expense</span>
           </Button>
-          <Button className="h-20 flex-col gap-2" variant="outline">
-            <ArrowUpDown className="h-6 w-6" />
-            <span className="text-sm">Transfer</span>
+          <Button className='h-20 flex-col gap-2' variant='outline'>
+            <ArrowUpDown className='h-6 w-6' />
+            <span className='text-sm'>Transfer</span>
           </Button>
-          <Button className="h-20 flex-col gap-2" variant="outline">
-            <CreditCard className="h-6 w-6" />
-            <span className="text-sm">Add Account</span>
+          <Button className='h-20 flex-col gap-2' variant='outline'>
+            <CreditCard className='h-6 w-6' />
+            <span className='text-sm'>Add Account</span>
           </Button>
         </div>
 
         {/* Balance Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
           <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-gray-600">
+            <CardHeader className='pb-3'>
+              <CardTitle className='text-sm font-medium text-gray-600'>
                 Total Balance
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-green-600">$0.00</div>
-              <p className="text-xs text-gray-500 mt-1">
-                Across all accounts
-              </p>
+              <div className='text-2xl font-bold text-green-600'>$0.00</div>
+              <p className='text-xs text-gray-500 mt-1'>Across all accounts</p>
             </CardContent>
           </Card>
 
           <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-gray-600">
+            <CardHeader className='pb-3'>
+              <CardTitle className='text-sm font-medium text-gray-600'>
                 This Month Income
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-blue-600">$0.00</div>
-              <p className="text-xs text-gray-500 mt-1">
-                +0% from last month
-              </p>
+              <div className='text-2xl font-bold text-blue-600'>$0.00</div>
+              <p className='text-xs text-gray-500 mt-1'>+0% from last month</p>
             </CardContent>
           </Card>
 
           <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-gray-600">
+            <CardHeader className='pb-3'>
+              <CardTitle className='text-sm font-medium text-gray-600'>
                 This Month Expenses
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-red-600">$0.00</div>
-              <p className="text-xs text-gray-500 mt-1">
-                +0% from last month
-              </p>
+              <div className='text-2xl font-bold text-red-600'>$0.00</div>
+              <p className='text-xs text-gray-500 mt-1'>+0% from last month</p>
             </CardContent>
           </Card>
         </div>
@@ -120,10 +120,10 @@ export function Dashboard({ user }: DashboardProps) {
         {/* Accounts */}
         <Card>
           <CardHeader>
-            <div className="flex items-center justify-between">
+            <div className='flex items-center justify-between'>
               <CardTitle>Accounts</CardTitle>
-              <Button size="sm" variant="outline">
-                <PlusCircle className="h-4 w-4 mr-2" />
+              <Button size='sm' variant='outline'>
+                <PlusCircle className='h-4 w-4 mr-2' />
                 Add Account
               </Button>
             </div>
@@ -132,10 +132,10 @@ export function Dashboard({ user }: DashboardProps) {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-center py-8 text-gray-500">
-              <CreditCard className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-              <p className="text-sm">No accounts yet</p>
-              <p className="text-xs">Add your first account to get started</p>
+            <div className='text-center py-8 text-gray-500'>
+              <CreditCard className='h-12 w-12 mx-auto mb-4 text-gray-300' />
+              <p className='text-sm'>No accounts yet</p>
+              <p className='text-xs'>Add your first account to get started</p>
             </div>
           </CardContent>
         </Card>
@@ -144,19 +144,17 @@ export function Dashboard({ user }: DashboardProps) {
         <Card>
           <CardHeader>
             <CardTitle>Recent Transactions</CardTitle>
-            <CardDescription>
-              Your latest financial activities
-            </CardDescription>
+            <CardDescription>Your latest financial activities</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-center py-8 text-gray-500">
-              <DollarSign className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-              <p className="text-sm">No transactions yet</p>
-              <p className="text-xs">Start by adding an income or expense</p>
+            <div className='text-center py-8 text-gray-500'>
+              <DollarSign className='h-12 w-12 mx-auto mb-4 text-gray-300' />
+              <p className='text-sm'>No transactions yet</p>
+              <p className='text-xs'>Start by adding an income or expense</p>
             </div>
           </CardContent>
         </Card>
       </main>
     </div>
-  );
+  )
 }

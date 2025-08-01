@@ -26,13 +26,14 @@ A modern, mobile-friendly financial tracking application built with Next.js, fea
 
 ### Prerequisites
 
-- Node.js 18+ 
+- Node.js 18+
 - PostgreSQL database (Neon, Vercel Postgres, or local)
 - Google OAuth credentials
 
 ### Installation
 
 1. **Clone and install dependencies**
+
    ```bash
    git clone <your-repo>
    cd money-tracker
@@ -40,8 +41,9 @@ A modern, mobile-friendly financial tracking application built with Next.js, fea
    ```
 
 2. **Set up environment variables**
-   
+
    Copy `.env` and fill in your credentials:
+
    ```bash
    DATABASE_URL="your_postgresql_connection_string"
    GOOGLE_CLIENT_ID="your_google_client_id"
@@ -50,6 +52,7 @@ A modern, mobile-friendly financial tracking application built with Next.js, fea
    ```
 
 3. **Set up Google OAuth**
+
    - Go to [Google Cloud Console](https://console.cloud.google.com/)
    - Create a new project or select existing
    - Enable Google+ API
@@ -57,14 +60,16 @@ A modern, mobile-friendly financial tracking application built with Next.js, fea
    - Add authorized redirect URI: `http://localhost:3000/api/auth/callback/google`
 
 4. **Database setup**
-   
+
    Generate and run database migrations:
+
    ```bash
    npx drizzle-kit generate
    npx drizzle-kit migrate
    ```
 
 5. **Start development server**
+
    ```bash
    npm run dev
    ```
