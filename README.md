@@ -2,6 +2,16 @@
 
 A modern, mobile-friendly financial tracking application built with Next.js, featuring multi-currency support, double-entry bookkeeping, and offline capabilities.
 
+## 🚀 Current Status
+
+✅ **READY FOR TESTING** - All core infrastructure is set up and working!
+
+- ✅ Authentication with Google OAuth
+- ✅ Database schema and migrations applied
+- ✅ Beautiful UI with shadcn/ui components
+- ✅ Mobile-responsive design
+- 🚧 Account and transaction management (next phase)
+
 ## Features
 
 - 🔐 **Google OAuth Authentication** - Secure sign-in with Google
