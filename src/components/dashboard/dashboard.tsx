@@ -1,5 +1,7 @@
 'use client'
 
+import { AccountsList } from '@/components/accounts/accounts-list'
+import { AddAccountDialog } from '@/components/accounts/add-account-dialog'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
@@ -19,12 +21,20 @@ import {
 } from 'lucide-react'
 import { User } from 'next-auth'
 import { signOut } from 'next-auth/react'
+import { useState } from 'react'
 
 interface DashboardProps {
   user: User
 }
 
 export function Dashboard({ user }: DashboardProps) {
+  const [refreshKey, setRefreshKey] = useState(0)
+
+  const handleAccountCreated = () => {
+    // Refresh the dashboard data
+    setRefreshKey(prev => prev + 1)
+  }
+
   return (
     <div className='min-h-screen bg-gray-50'>
       {/* Header */}
@@ -72,10 +82,12 @@ export function Dashboard({ user }: DashboardProps) {
             <ArrowUpDown className='h-6 w-6' />
             <span className='text-sm'>Transfer</span>
           </Button>
-          <Button className='h-20 flex-col gap-2' variant='outline'>
-            <CreditCard className='h-6 w-6' />
-            <span className='text-sm'>Add Account</span>
-          </Button>
+          <AddAccountDialog onAccountCreated={handleAccountCreated}>
+            <Button className='h-20 flex-col gap-2' variant='outline'>
+              <CreditCard className='h-6 w-6' />
+              <span className='text-sm'>Add Account</span>
+            </Button>
+          </AddAccountDialog>
         </div>
 
         {/* Balance Overview */}
@@ -122,21 +134,19 @@ export function Dashboard({ user }: DashboardProps) {
           <CardHeader>
             <div className='flex items-center justify-between'>
               <CardTitle>Accounts</CardTitle>
-              <Button size='sm' variant='outline'>
-                <PlusCircle className='h-4 w-4 mr-2' />
-                Add Account
-              </Button>
+              <AddAccountDialog onAccountCreated={handleAccountCreated}>
+                <Button size='sm' variant='outline'>
+                  <PlusCircle className='h-4 w-4 mr-2' />
+                  Add Account
+                </Button>
+              </AddAccountDialog>
             </div>
             <CardDescription>
               Manage your bank accounts, wallets, and other financial accounts
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className='text-center py-8 text-gray-500'>
-              <CreditCard className='h-12 w-12 mx-auto mb-4 text-gray-300' />
-              <p className='text-sm'>No accounts yet</p>
-              <p className='text-xs'>Add your first account to get started</p>
-            </div>
+            <AccountsList refreshKey={refreshKey} />
           </CardContent>
         </Card>
 
