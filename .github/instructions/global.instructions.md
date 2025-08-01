@@ -44,6 +44,8 @@ This stack is modern, highly performant, and tailored to your specific requests.
 - Use single quotes for strings.
 - Use function based components in React.
 - Use arrow functions for callbacks.
+- Always use nextjs server actions instead of creating API routes or route handlers.
+- Always try to use nextjs server components.
 
 ## UI guidelines
 
