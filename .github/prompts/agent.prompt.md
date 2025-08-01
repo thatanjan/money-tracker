@@ -1,5 +1,5 @@
 ---
-mode: Agent
+mode: agent
 ---
 
 - Don't change the original code or the changes I have made.
