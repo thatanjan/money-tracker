@@ -1,8 +1,8 @@
 'use client'
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { getDashboardData } from '@/actions'
-import { TrendingUp, TrendingDown } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { TrendingDown, TrendingUp } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 interface DashboardStats {
@@ -62,7 +62,7 @@ export function DashboardStats({ refreshKey }: DashboardStatsProps) {
     const isPositive = change >= 0
     const Icon = isPositive ? TrendingUp : TrendingDown
     const color = isPositive ? 'text-green-600' : 'text-red-600'
-    
+
     return (
       <div className={`flex items-center gap-1 ${color}`}>
         <Icon className='h-3 w-3' />
@@ -102,7 +102,8 @@ export function DashboardStats({ refreshKey }: DashboardStatsProps) {
             {formatCurrency(stats.totalBalance)}
           </div>
           <p className='text-xs text-gray-500 mt-1'>
-            Across {stats.accounts.length} account{stats.accounts.length !== 1 ? 's' : ''}
+            Across {stats.accounts.length} account
+            {stats.accounts.length !== 1 ? 's' : ''}
           </p>
         </CardContent>
       </Card>

@@ -1,9 +1,14 @@
 'use server'
 
 import { db } from '@/db/client'
-import { accounts, transactions, transactionSplits, categories } from '@/db/schema'
+import {
+  accounts,
+  categories,
+  transactions,
+  transactionSplits,
+} from '@/db/schema'
 import { auth } from '@/lib/auth'
-import { and, desc, eq, gte, sql } from 'drizzle-orm'
+import { and, desc, eq, gte, lt } from 'drizzle-orm'
 
 export async function getDashboardData() {
   try {
@@ -24,7 +29,9 @@ export async function getDashboardData() {
         currency: accounts.currency,
       })
       .from(accounts)
-      .where(and(eq(accounts.userId, session.user.id!), eq(accounts.isActive, true)))
+      .where(
+        and(eq(accounts.userId, session.user.id!), eq(accounts.isActive, true))
+      )
 
     // Calculate total balance (assuming USD for now, currency conversion can be added later)
     const totalBalance = accountsData.reduce((sum, account) => {
@@ -44,12 +51,15 @@ export async function getDashboardData() {
         amount: transactionSplits.amount,
       })
       .from(transactions)
-      .innerJoin(transactionSplits, eq(transactions.id, transactionSplits.transactionId))
+      .innerJoin(
+        transactionSplits,
+        eq(transactions.id, transactionSplits.transactionId)
+      )
       .where(
         and(
           eq(transactions.userId, session.user.id!),
           gte(transactions.date, currentMonthStart),
-          sql`${transactions.date} < ${nextMonthStart}`
+          lt(transactions.date, nextMonthStart)
         )
       )
 
@@ -60,12 +70,15 @@ export async function getDashboardData() {
         amount: transactionSplits.amount,
       })
       .from(transactions)
-      .innerJoin(transactionSplits, eq(transactions.id, transactionSplits.transactionId))
+      .innerJoin(
+        transactionSplits,
+        eq(transactions.id, transactionSplits.transactionId)
+      )
       .where(
         and(
           eq(transactions.userId, session.user.id!),
           gte(transactions.date, lastMonthStart),
-          sql`${transactions.date} < ${currentMonthStart}`
+          lt(transactions.date, currentMonthStart)
         )
       )
 
@@ -96,13 +109,19 @@ export async function getDashboardData() {
     })
 
     // Calculate percentage changes
-    const incomeChange = lastMonthIncome > 0 
-      ? ((currentMonthIncome - lastMonthIncome) / lastMonthIncome) * 100 
-      : currentMonthIncome > 0 ? 100 : 0
+    const incomeChange =
+      lastMonthIncome > 0
+        ? ((currentMonthIncome - lastMonthIncome) / lastMonthIncome) * 100
+        : currentMonthIncome > 0
+        ? 100
+        : 0
 
-    const expenseChange = lastMonthExpenses > 0 
-      ? ((currentMonthExpenses - lastMonthExpenses) / lastMonthExpenses) * 100 
-      : currentMonthExpenses > 0 ? 100 : 0
+    const expenseChange =
+      lastMonthExpenses > 0
+        ? ((currentMonthExpenses - lastMonthExpenses) / lastMonthExpenses) * 100
+        : currentMonthExpenses > 0
+        ? 100
+        : 0
 
     return {
       success: true,
@@ -113,13 +132,13 @@ export async function getDashboardData() {
         incomeChange,
         expenseChange,
         accounts: accountsData,
-      }
+      },
     }
   } catch (error) {
     console.error('Error fetching dashboard data:', error)
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Internal server error'
+      error: error instanceof Error ? error.message : 'Internal server error',
     }
   }
 }
@@ -160,11 +179,14 @@ export async function getRecentTransactions(limit: number = 10) {
           name: accounts.name,
           icon: accounts.icon,
           color: accounts.color,
-        }
+        },
       })
       .from(transactions)
       .innerJoin(categories, eq(transactions.categoryId, categories.id))
-      .innerJoin(transactionSplits, eq(transactions.id, transactionSplits.transactionId))
+      .innerJoin(
+        transactionSplits,
+        eq(transactions.id, transactionSplits.transactionId)
+      )
       .innerJoin(accounts, eq(transactionSplits.accountId, accounts.id))
       .where(eq(transactions.userId, session.user.id!))
       .orderBy(desc(transactions.date), desc(transactions.createdAt))
@@ -172,13 +194,13 @@ export async function getRecentTransactions(limit: number = 10) {
 
     return {
       success: true,
-      data: recentTransactions
+      data: recentTransactions,
     }
   } catch (error) {
     console.error('Error fetching recent transactions:', error)
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Internal server error'
+      error: error instanceof Error ? error.message : 'Internal server error',
     }
   }
 }

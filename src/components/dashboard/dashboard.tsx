@@ -2,8 +2,8 @@
 
 import { AccountsList } from '@/components/accounts/accounts-list'
 import { AddAccountDialog } from '@/components/accounts/add-account-dialog'
-import { AddIncomeDialog } from '@/components/transactions/add-income-dialog'
 import { DashboardStats } from '@/components/dashboard/dashboard-stats'
+import { AddIncomeDialog } from '@/components/transactions/add-income-dialog'
 import { RecentTransactions } from '@/components/transactions/recent-transactions'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'

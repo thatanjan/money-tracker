@@ -1,11 +1,11 @@
 'use client'
 
-import { Badge } from '@/components/ui/badge'
 import { getRecentTransactions } from '@/actions'
+import { Badge } from '@/components/ui/badge'
 import {
   ArrowDownLeft,
-  ArrowUpRight,
   ArrowRightLeft,
+  ArrowUpRight,
   DollarSign,
 } from 'lucide-react'
 import { useEffect, useState } from 'react'
@@ -141,7 +141,7 @@ export function RecentTransactions({ refreshKey }: RecentTransactionsProps) {
 
   return (
     <div className='space-y-3'>
-      {transactions.map((transaction) => (
+      {transactions.map(transaction => (
         <div
           key={transaction.id}
           className='flex items-center space-x-3 p-3 hover:bg-gray-50 rounded-lg transition-colors'
@@ -164,7 +164,8 @@ export function RecentTransactions({ refreshKey }: RecentTransactionsProps) {
                 variant='secondary'
                 className='text-xs'
                 style={{
-                  backgroundColor: (transaction.category.color || '#6B7280') + '20',
+                  backgroundColor:
+                    (transaction.category.color || '#6B7280') + '20',
                   color: transaction.category.color || '#6B7280',
                 }}
               >
