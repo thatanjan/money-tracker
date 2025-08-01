@@ -2,6 +2,9 @@
 
 import { AccountsList } from '@/components/accounts/accounts-list'
 import { AddAccountDialog } from '@/components/accounts/add-account-dialog'
+import { DashboardStats } from '@/components/dashboard/dashboard-stats'
+import { AddIncomeDialog } from '@/components/transactions/add-income-dialog'
+import { RecentTransactions } from '@/components/transactions/recent-transactions'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
@@ -14,7 +17,6 @@ import {
 import {
   ArrowUpDown,
   CreditCard,
-  DollarSign,
   LogOut,
   PlusCircle,
   TrendingDown,
@@ -31,6 +33,11 @@ export function Dashboard({ user }: DashboardProps) {
   const [refreshKey, setRefreshKey] = useState(0)
 
   const handleAccountCreated = () => {
+    // Refresh the dashboard data
+    setRefreshKey(prev => prev + 1)
+  }
+
+  const handleIncomeAdded = () => {
     // Refresh the dashboard data
     setRefreshKey(prev => prev + 1)
   }
@@ -70,10 +77,12 @@ export function Dashboard({ user }: DashboardProps) {
       <main className='max-w-6xl mx-auto p-4 space-y-6'>
         {/* Quick Actions */}
         <div className='grid grid-cols-2 sm:grid-cols-4 gap-3'>
-          <Button className='h-20 flex-col gap-2' variant='outline'>
-            <PlusCircle className='h-6 w-6' />
-            <span className='text-sm'>Add Income</span>
-          </Button>
+          <AddIncomeDialog onIncomeAdded={handleIncomeAdded}>
+            <Button className='h-20 flex-col gap-2' variant='outline'>
+              <PlusCircle className='h-6 w-6' />
+              <span className='text-sm'>Add Income</span>
+            </Button>
+          </AddIncomeDialog>
           <Button className='h-20 flex-col gap-2' variant='outline'>
             <TrendingDown className='h-6 w-6' />
             <span className='text-sm'>Add Expense</span>
@@ -91,43 +100,7 @@ export function Dashboard({ user }: DashboardProps) {
         </div>
 
         {/* Balance Overview */}
-        <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
-          <Card>
-            <CardHeader className='pb-3'>
-              <CardTitle className='text-sm font-medium text-gray-600'>
-                Total Balance
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className='text-2xl font-bold text-green-600'>$0.00</div>
-              <p className='text-xs text-gray-500 mt-1'>Across all accounts</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className='pb-3'>
-              <CardTitle className='text-sm font-medium text-gray-600'>
-                This Month Income
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className='text-2xl font-bold text-blue-600'>$0.00</div>
-              <p className='text-xs text-gray-500 mt-1'>+0% from last month</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className='pb-3'>
-              <CardTitle className='text-sm font-medium text-gray-600'>
-                This Month Expenses
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className='text-2xl font-bold text-red-600'>$0.00</div>
-              <p className='text-xs text-gray-500 mt-1'>+0% from last month</p>
-            </CardContent>
-          </Card>
-        </div>
+        <DashboardStats refreshKey={refreshKey} />
 
         {/* Accounts */}
         <Card>
@@ -157,11 +130,7 @@ export function Dashboard({ user }: DashboardProps) {
             <CardDescription>Your latest financial activities</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className='text-center py-8 text-gray-500'>
-              <DollarSign className='h-12 w-12 mx-auto mb-4 text-gray-300' />
-              <p className='text-sm'>No transactions yet</p>
-              <p className='text-xs'>Start by adding an income or expense</p>
-            </div>
+            <RecentTransactions refreshKey={refreshKey} />
           </CardContent>
         </Card>
       </main>

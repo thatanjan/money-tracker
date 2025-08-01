@@ -1,5 +1,6 @@
 'use client'
 
+import { getAccounts } from '@/actions'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import {
@@ -18,11 +19,11 @@ interface Account {
   name: string
   currency: string
   balance: string
-  icon: string
-  color: string
+  icon: string | null
+  color: string | null
   isActive: boolean
-  createdAt: string
-  updatedAt: string
+  createdAt: string | Date
+  updatedAt: string | Date
 }
 
 const ICON_MAP = {
@@ -55,10 +56,11 @@ export function AccountsList({ refreshKey }: AccountsListProps) {
 
   const fetchAccounts = async () => {
     try {
-      const response = await fetch('/api/accounts')
-      if (response.ok) {
-        const data = await response.json()
-        setAccounts(data)
+      const result = await getAccounts()
+      if (result.success && result.data) {
+        setAccounts(result.data)
+      } else {
+        console.error('Error fetching accounts:', result.error)
       }
     } catch (error) {
       console.error('Error fetching accounts:', error)
@@ -95,11 +97,13 @@ export function AccountsList({ refreshKey }: AccountsListProps) {
     <div className='space-y-3'>
       {accounts.map(account => {
         const IconComponent =
-          ICON_MAP[account.icon as keyof typeof ICON_MAP] || Wallet
+          ICON_MAP[(account.icon || 'wallet') as keyof typeof ICON_MAP] ||
+          Wallet
         const currencySymbol =
           CURRENCY_SYMBOLS[account.currency as keyof typeof CURRENCY_SYMBOLS] ||
           account.currency
         const balance = parseFloat(account.balance)
+        const accountColor = account.color || '#3B82F6'
 
         return (
           <Card key={account.id} className='hover:shadow-md transition-shadow'>
@@ -108,11 +112,11 @@ export function AccountsList({ refreshKey }: AccountsListProps) {
                 <div className='flex items-center space-x-3'>
                   <div
                     className='p-2 rounded-lg'
-                    style={{ backgroundColor: account.color + '20' }}
+                    style={{ backgroundColor: accountColor + '20' }}
                   >
                     <IconComponent
                       className='h-5 w-5'
-                      style={{ color: account.color }}
+                      style={{ color: accountColor }}
                     />
                   </div>
                   <div>
