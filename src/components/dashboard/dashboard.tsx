@@ -3,6 +3,7 @@
 import { AccountsList } from '@/components/accounts/accounts-list'
 import { AddAccountDialog } from '@/components/accounts/add-account-dialog'
 import { DashboardStats } from '@/components/dashboard/dashboard-stats'
+import { AddExpenseDialog } from '@/components/transactions/add-expense-dialog'
 import { AddIncomeDialog } from '@/components/transactions/add-income-dialog'
 import { RecentTransactions } from '@/components/transactions/recent-transactions'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -39,6 +40,17 @@ export function Dashboard({ user }: DashboardProps) {
 
   const handleIncomeAdded = () => {
     // Refresh the dashboard data
+    setRefreshKey(prev => prev + 1)
+  }
+
+  const handleExpenseAdded = () => {
+    // Refresh the dashboard data
+    console.log(
+      'handleExpenseAdded called, updating refreshKey from',
+      refreshKey,
+      'to',
+      refreshKey + 1
+    )
     setRefreshKey(prev => prev + 1)
   }
 
@@ -83,10 +95,12 @@ export function Dashboard({ user }: DashboardProps) {
               <span className='text-sm'>Add Income</span>
             </Button>
           </AddIncomeDialog>
-          <Button className='h-20 flex-col gap-2' variant='outline'>
-            <TrendingDown className='h-6 w-6' />
-            <span className='text-sm'>Add Expense</span>
-          </Button>
+          <AddExpenseDialog onExpenseAdded={handleExpenseAdded}>
+            <Button className='h-20 flex-col gap-2' variant='outline'>
+              <TrendingDown className='h-6 w-6' />
+              <span className='text-sm'>Add Expense</span>
+            </Button>
+          </AddExpenseDialog>
           <Button className='h-20 flex-col gap-2' variant='outline'>
             <ArrowUpDown className='h-6 w-6' />
             <span className='text-sm'>Transfer</span>
