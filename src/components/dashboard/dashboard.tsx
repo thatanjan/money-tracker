@@ -3,8 +3,8 @@
 import { AccountsList } from '@/components/accounts/accounts-list'
 import { AddAccountDialog } from '@/components/accounts/add-account-dialog'
 import { DashboardStats } from '@/components/dashboard/dashboard-stats'
-import { AddIncomeDialog } from '@/components/transactions/add-income-dialog'
 import { AddExpenseDialog } from '@/components/transactions/add-expense-dialog'
+import { AddIncomeDialog } from '@/components/transactions/add-income-dialog'
 import { RecentTransactions } from '@/components/transactions/recent-transactions'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
@@ -45,6 +45,12 @@ export function Dashboard({ user }: DashboardProps) {
 
   const handleExpenseAdded = () => {
     // Refresh the dashboard data
+    console.log(
+      'handleExpenseAdded called, updating refreshKey from',
+      refreshKey,
+      'to',
+      refreshKey + 1
+    )
     setRefreshKey(prev => prev + 1)
   }
 

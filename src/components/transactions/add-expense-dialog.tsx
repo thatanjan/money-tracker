@@ -46,7 +46,7 @@ const expenseSchema = z.object({
   amount: z
     .string()
     .min(1, { message: 'Amount is required.' })
-    .refine((val) => !isNaN(parseFloat(val)) && parseFloat(val) > 0, {
+    .refine(val => !isNaN(parseFloat(val)) && parseFloat(val) > 0, {
       message: 'Amount must be a valid number greater than 0.',
     }),
   accountId: z.string().min(1, { message: 'Please select an account.' }),
@@ -139,6 +139,7 @@ export function AddExpenseDialog({
       })
 
       if (result.success) {
+        console.log('Expense created successfully, calling onExpenseAdded')
         form.reset()
         setOpen(false)
         onExpenseAdded?.()
@@ -155,11 +156,11 @@ export function AddExpenseDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className='sm:max-w-[500px]'>
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-md bg-red-100 dark:bg-red-900/20">
-              <TrendingDown className="h-4 w-4 text-red-600 dark:text-red-400" />
+          <DialogTitle className='flex items-center gap-2'>
+            <div className='flex h-8 w-8 items-center justify-center rounded-md bg-red-100 dark:bg-red-900/20'>
+              <TrendingDown className='h-4 w-4 text-red-600 dark:text-red-400' />
             </div>
             Add Expense
           </DialogTitle>
@@ -170,40 +171,37 @@ export function AddExpenseDialog({
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
             <FormField
               control={form.control}
-              name="description"
+              name='description'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Description</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="e.g., Lunch at restaurant"
-                      {...field}
-                    />
+                    <Input placeholder='e.g., Lunch at restaurant' {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className='grid grid-cols-2 gap-4'>
               <FormField
                 control={form.control}
-                name="amount"
+                name='amount'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Amount</FormLabel>
                     <FormControl>
-                      <div className="relative">
-                        <DollarSign className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                      <div className='relative'>
+                        <DollarSign className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
                         <Input
-                          type="number"
-                          step="0.01"
-                          min="0"
-                          placeholder="0.00"
-                          className="pl-9"
+                          type='number'
+                          step='0.01'
+                          min='0'
+                          placeholder='0.00'
+                          className='pl-9'
                           {...field}
                         />
                       </div>
@@ -215,18 +213,14 @@ export function AddExpenseDialog({
 
               <FormField
                 control={form.control}
-                name="date"
+                name='date'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Date</FormLabel>
                     <FormControl>
-                      <div className="relative">
-                        <CalendarDays className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                        <Input
-                          type="date"
-                          className="pl-9"
-                          {...field}
-                        />
+                      <div className='relative'>
+                        <CalendarDays className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
+                        <Input type='date' className='pl-9' {...field} />
                       </div>
                     </FormControl>
                     <FormMessage />
@@ -237,23 +231,28 @@ export function AddExpenseDialog({
 
             <FormField
               control={form.control}
-              name="accountId"
+              name='accountId'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Account</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select an account" />
+                        <SelectValue placeholder='Select an account' />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {accounts.map((account) => (
+                      {accounts.map(account => (
                         <SelectItem key={account.id} value={account.id}>
-                          <div className="flex items-center gap-2">
+                          <div className='flex items-center gap-2'>
                             <div
-                              className="h-3 w-3 rounded-full"
-                              style={{ backgroundColor: account.color || '#3B82F6' }}
+                              className='h-3 w-3 rounded-full'
+                              style={{
+                                backgroundColor: account.color || '#3B82F6',
+                              }}
                             />
                             {account.name} ({account.currency}{' '}
                             {parseFloat(account.balance).toFixed(2)})
@@ -272,23 +271,28 @@ export function AddExpenseDialog({
 
             <FormField
               control={form.control}
-              name="categoryId"
+              name='categoryId'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Category</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select a category" />
+                        <SelectValue placeholder='Select a category' />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {categories.map((category) => (
+                      {categories.map(category => (
                         <SelectItem key={category.id} value={category.id}>
-                          <div className="flex items-center gap-2">
+                          <div className='flex items-center gap-2'>
                             <div
-                              className="h-3 w-3 rounded-full"
-                              style={{ backgroundColor: category.color || '#6B7280' }}
+                              className='h-3 w-3 rounded-full'
+                              style={{
+                                backgroundColor: category.color || '#6B7280',
+                              }}
                             />
                             {category.name}
                           </div>
@@ -306,14 +310,14 @@ export function AddExpenseDialog({
 
             <FormField
               control={form.control}
-              name="notes"
+              name='notes'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Notes (Optional)</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Additional details about this expense..."
-                      className="resize-none"
+                      placeholder='Additional details about this expense...'
+                      className='resize-none'
                       {...field}
                     />
                   </FormControl>
@@ -322,28 +326,28 @@ export function AddExpenseDialog({
               )}
             />
 
-            <div className="flex gap-3 pt-4">
+            <div className='flex gap-3 pt-4'>
               <Button
-                type="button"
-                variant="outline"
-                className="flex-1"
+                type='button'
+                variant='outline'
+                className='flex-1'
                 onClick={() => setOpen(false)}
               >
                 Cancel
               </Button>
               <Button
-                type="submit"
-                className="flex-1 bg-red-600 hover:bg-red-700"
+                type='submit'
+                className='flex-1 bg-red-600 hover:bg-red-700'
                 disabled={loading}
               >
                 {loading ? (
                   <>
-                    <Minus className="mr-2 h-4 w-4 animate-spin" />
+                    <Minus className='mr-2 h-4 w-4 animate-spin' />
                     Adding...
                   </>
                 ) : (
                   <>
-                    <Minus className="mr-2 h-4 w-4" />
+                    <Minus className='mr-2 h-4 w-4' />
                     Add Expense
                   </>
                 )}

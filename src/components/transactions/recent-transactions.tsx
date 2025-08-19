@@ -42,7 +42,7 @@ interface RecentTransactionsProps {
 export function RecentTransactions({ refreshKey }: RecentTransactionsProps) {
   const [transactions, setTransactions] = useState<RecentTransaction[]>([])
   const [loading, setLoading] = useState(true)
-  const [isPending, startTransition] = useTransition()
+  const [, startTransition] = useTransition()
 
   useEffect(() => {
     startTransition(() => {
