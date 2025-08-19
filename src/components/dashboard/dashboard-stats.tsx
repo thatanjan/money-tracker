@@ -31,7 +31,7 @@ export function DashboardStats({ refreshKey }: DashboardStatsProps) {
     accounts: [],
   })
   const [loading, setLoading] = useState(true)
-  const [isPending, startTransition] = useTransition()
+  const [, startTransition] = useTransition()
 
   useEffect(() => {
     startTransition(() => {
