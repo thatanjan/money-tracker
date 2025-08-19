@@ -265,3 +265,157 @@ export async function getTransactions(
     }
   }
 }
+
+const createTransferSchema = z.object({
+  description: z.string().min(2).max(100),
+  amount: z.number().positive(),
+  fromAccountId: z.string().min(1),
+  toAccountId: z.string().min(1),
+  transferCost: z.number().min(0).default(0),
+  date: z.string().min(1),
+  notes: z.string().optional(),
+})
+
+export async function createTransferData(data: {
+  description: string
+  amount: number
+  fromAccountId: string
+  toAccountId: string
+  transferCost: number
+  date: string
+  notes?: string
+}) {
+  try {
+    const session = await auth()
+
+    if (!session?.user?.email) {
+      throw new Error('Unauthorized')
+    }
+
+    if (!db) {
+      throw new Error('Database not available')
+    }
+
+    const validatedData = createTransferSchema.parse(data)
+
+    // Get both accounts to determine currencies and validate balances
+    const [fromAccount] = await db
+      .select()
+      .from(accounts)
+      .where(eq(accounts.id, validatedData.fromAccountId))
+      .limit(1)
+
+    const [toAccount] = await db
+      .select()
+      .from(accounts)
+      .where(eq(accounts.id, validatedData.toAccountId))
+      .limit(1)
+
+    if (!fromAccount) {
+      return { success: false, error: 'Source account not found' }
+    }
+
+    if (!toAccount) {
+      return { success: false, error: 'Destination account not found' }
+    }
+
+    // Check if source account has sufficient balance (amount + transfer cost)
+    const totalDeduction = validatedData.amount + validatedData.transferCost
+    const currentBalance = parseFloat(fromAccount.balance)
+
+    if (currentBalance < totalDeduction) {
+      return {
+        success: false,
+        error: `Insufficient balance. Available: ${
+          fromAccount.currency
+        } ${currentBalance.toFixed(2)}, Required: ${
+          fromAccount.currency
+        } ${totalDeduction.toFixed(2)}`,
+      }
+    }
+
+    // Create transfer transactions in a single database transaction
+    const result = await db.transaction(async tx => {
+      // Create the main transfer transaction record
+      const [newTransaction] = await tx
+        .insert(transactions)
+        .values({
+          userId: session.user.id!,
+          description: validatedData.description,
+          date: new Date(validatedData.date),
+          type: 'transfer',
+          categoryId: null, // Transfers don't need categories
+        })
+        .returning()
+
+      // Create transaction split for source account (negative - money going out)
+      const sourceAmount = -(validatedData.amount + validatedData.transferCost)
+      await tx.insert(transactionSplits).values({
+        transactionId: newTransaction.id,
+        accountId: validatedData.fromAccountId,
+        amount: sourceAmount.toString(),
+        currency: fromAccount.currency,
+        description: `Transfer to ${toAccount.name}${
+          validatedData.transferCost > 0
+            ? ` (includes ${
+                fromAccount.currency
+              } ${validatedData.transferCost.toFixed(2)} transfer cost)`
+            : ''
+        }`,
+      })
+
+      // Create transaction split for destination account (positive - money coming in)
+      await tx.insert(transactionSplits).values({
+        transactionId: newTransaction.id,
+        accountId: validatedData.toAccountId,
+        amount: validatedData.amount.toString(),
+        currency: toAccount.currency,
+        description: `Transfer from ${fromAccount.name}`,
+      })
+
+      // Update source account balance (subtract amount + transfer cost)
+      const newFromBalance = currentBalance - totalDeduction
+      await tx
+        .update(accounts)
+        .set({
+          balance: newFromBalance.toString(),
+          updatedAt: new Date(),
+        })
+        .where(eq(accounts.id, validatedData.fromAccountId))
+
+      // Update destination account balance (add amount)
+      const currentToBalance = parseFloat(toAccount.balance)
+      const newToBalance = currentToBalance + validatedData.amount
+      await tx
+        .update(accounts)
+        .set({
+          balance: newToBalance.toString(),
+          updatedAt: new Date(),
+        })
+        .where(eq(accounts.id, validatedData.toAccountId))
+
+      return newTransaction
+    })
+
+    // Revalidate pages that might show transactions and accounts
+    revalidatePath('/')
+    revalidatePath('/dashboard')
+
+    return { success: true, data: result }
+  } catch (error) {
+    console.error('Error creating transfer:', error)
+
+    if (error instanceof z.ZodError) {
+      return {
+        success: false,
+        error: 'Invalid input',
+        details: error.issues,
+      }
+    }
+
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Internal server error',
+    }
+  }
+}
