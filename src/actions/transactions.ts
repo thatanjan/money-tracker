@@ -268,7 +268,8 @@ export async function getTransactions(
 
 const createTransferSchema = z.object({
   description: z.string().min(2).max(100),
-  amount: z.number().positive(),
+  fromAmount: z.number().positive(),
+  toAmount: z.number().positive(),
   fromAccountId: z.string().min(1),
   toAccountId: z.string().min(1),
   transferCost: z.number().min(0).default(0),
@@ -278,7 +279,8 @@ const createTransferSchema = z.object({
 
 export async function createTransferData(data: {
   description: string
-  amount: number
+  fromAmount: number
+  toAmount: number
   fromAccountId: string
   toAccountId: string
   transferCost: number
@@ -319,8 +321,8 @@ export async function createTransferData(data: {
       return { success: false, error: 'Destination account not found' }
     }
 
-    // Check if source account has sufficient balance (amount + transfer cost)
-    const totalDeduction = validatedData.amount + validatedData.transferCost
+    // Check if source account has sufficient balance (fromAmount + transfer cost)
+    const totalDeduction = validatedData.fromAmount + validatedData.transferCost
     const currentBalance = parseFloat(fromAccount.balance)
 
     if (currentBalance < totalDeduction) {
@@ -349,7 +351,9 @@ export async function createTransferData(data: {
         .returning()
 
       // Create transaction split for source account (negative - money going out)
-      const sourceAmount = -(validatedData.amount + validatedData.transferCost)
+      const sourceAmount = -(
+        validatedData.fromAmount + validatedData.transferCost
+      )
       await tx.insert(transactionSplits).values({
         transactionId: newTransaction.id,
         accountId: validatedData.fromAccountId,
@@ -368,7 +372,7 @@ export async function createTransferData(data: {
       await tx.insert(transactionSplits).values({
         transactionId: newTransaction.id,
         accountId: validatedData.toAccountId,
-        amount: validatedData.amount.toString(),
+        amount: validatedData.toAmount.toString(),
         currency: toAccount.currency,
         description: `Transfer from ${fromAccount.name}`,
       })
@@ -385,7 +389,7 @@ export async function createTransferData(data: {
 
       // Update destination account balance (add amount)
       const currentToBalance = parseFloat(toAccount.balance)
-      const newToBalance = currentToBalance + validatedData.amount
+      const newToBalance = currentToBalance + validatedData.toAmount
       await tx
         .update(accounts)
         .set({

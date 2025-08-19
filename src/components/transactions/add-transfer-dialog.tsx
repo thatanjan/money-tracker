@@ -44,11 +44,17 @@ const transferSchema = z
       .max(100, {
         message: 'Description must not be longer than 100 characters.',
       }),
-    amount: z
+    fromAmount: z
       .string()
-      .min(1, { message: 'Amount is required.' })
+      .min(1, { message: 'From amount is required.' })
       .refine(val => !isNaN(parseFloat(val)) && parseFloat(val) > 0, {
-        message: 'Amount must be a valid number greater than 0.',
+        message: 'From amount must be a valid number greater than 0.',
+      }),
+    toAmount: z
+      .string()
+      .min(1, { message: 'To amount is required.' })
+      .refine(val => !isNaN(parseFloat(val)) && parseFloat(val) > 0, {
+        message: 'To amount must be a valid number greater than 0.',
       }),
     fromAccountId: z
       .string()
@@ -101,7 +107,8 @@ export function AddTransferDialog({
     resolver: zodResolver(transferSchema),
     defaultValues: {
       description: '',
-      amount: '',
+      fromAmount: '',
+      toAmount: '',
       fromAccountId: '',
       toAccountId: '',
       transferCost: '',
@@ -140,7 +147,8 @@ export function AddTransferDialog({
     try {
       const result = await createTransferData({
         description: data.description,
-        amount: parseFloat(data.amount),
+        fromAmount: parseFloat(data.fromAmount),
+        toAmount: parseFloat(data.toAmount),
         fromAccountId: data.fromAccountId,
         toAccountId: data.toAccountId,
         transferCost: data.transferCost ? parseFloat(data.transferCost) : 0,
@@ -201,11 +209,45 @@ export function AddTransferDialog({
             <div className='grid grid-cols-2 gap-4'>
               <FormField
                 control={form.control}
-                name='amount'
+                name='fromAmount'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      Amount
+                      From Amount
+                      {selectedFromAccount && (
+                        <span className='text-sm text-muted-foreground ml-1'>
+                          ({selectedFromAccount.currency})
+                        </span>
+                      )}
+                    </FormLabel>
+                    <FormControl>
+                      <div className='relative'>
+                        <DollarSign className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
+                        <Input
+                          type='number'
+                          step='0.01'
+                          min='0'
+                          placeholder='0.00'
+                          className='pl-9'
+                          {...field}
+                        />
+                      </div>
+                    </FormControl>
+                    <FormDescription>
+                      Amount to be deducted from source account
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name='toAmount'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      To Amount
                       {selectedToAccount && (
                         <span className='text-sm text-muted-foreground ml-1'>
                           ({selectedToAccount.currency})
@@ -232,7 +274,9 @@ export function AddTransferDialog({
                   </FormItem>
                 )}
               />
+            </div>
 
+            <div className='grid grid-cols-2 gap-4'>
               <FormField
                 control={form.control}
                 name='date'
@@ -249,6 +293,22 @@ export function AddTransferDialog({
                   </FormItem>
                 )}
               />
+
+              <div className='flex items-end'>
+                {selectedFromAccount &&
+                  selectedToAccount &&
+                  selectedFromAccount.currency !==
+                    selectedToAccount.currency && (
+                    <div className='p-2 bg-blue-50 dark:bg-blue-900/20 rounded-md border border-blue-200 dark:border-blue-800 text-xs'>
+                      <p className='text-blue-800 dark:text-blue-200'>
+                        <strong>Currency Exchange</strong>
+                        <br />
+                        {selectedFromAccount.currency} →{' '}
+                        {selectedToAccount.currency}
+                      </p>
+                    </div>
+                  )}
+              </div>
             </div>
 
             <div className='grid grid-cols-2 gap-4'>
@@ -347,19 +407,6 @@ export function AddTransferDialog({
                 )}
               />
             </div>
-
-            {selectedFromAccount &&
-              selectedToAccount &&
-              selectedFromAccount.currency !== selectedToAccount.currency && (
-                <div className='p-3 bg-blue-50 dark:bg-blue-900/20 rounded-md border border-blue-200 dark:border-blue-800'>
-                  <p className='text-sm text-blue-800 dark:text-blue-200'>
-                    <strong>Currency Exchange:</strong> You&apos;re transferring
-                    from {selectedFromAccount.currency} to{' '}
-                    {selectedToAccount.currency}. The transfer cost will be in{' '}
-                    {selectedFromAccount.currency}.
-                  </p>
-                </div>
-              )}
 
             <FormField
               control={form.control}
